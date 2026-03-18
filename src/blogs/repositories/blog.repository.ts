@@ -14,7 +14,7 @@ export const blogsRepository = {
     const insertResult = await blogCollection.insertOne(newBlog);
     return { ...newBlog, _id: insertResult.insertedId };
   },
-  async update(id: string, dto: BlogInputDTO): Promise<void> {
+  async update(id: string, dto: BlogInputDTO): Promise<boolean> {
     const updateResult = await blogCollection.updateOne(
       { _id: new ObjectId(id) },
       {
@@ -25,10 +25,7 @@ export const blogsRepository = {
         },
       },
     );
-    if (updateResult.matchedCount < 1) {
-      throw new Error("Blog not exist");
-    }
-    return;
+    return updateResult.matchedCount === 1;
   },
   async delete(id: string): Promise<void> {
     const deleteResult = await blogCollection.deleteOne({
