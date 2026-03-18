@@ -7,4 +7,3 @@ export const idValidation = param('id')
     .withMessage('ID must be a string') // Проверка, что это строка
     .isLength({ min: 1 })
     .withMessage('ID must not be empty') // Проверка, что строка не пустая
-    .withMessage('ID must be a numeric string');
