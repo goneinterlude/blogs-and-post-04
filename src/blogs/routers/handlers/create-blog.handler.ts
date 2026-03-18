@@ -18,7 +18,6 @@ export async function createBlogHandler(
       isMembership: false,
     };
     const createdBlog = await blogsRepository.create(newBlog);
-
     const blogViewModel = mapToBlogViewModel(createdBlog);
     res.status(HttpStatus.Created).send(blogViewModel);
   } catch (e: unknown) {

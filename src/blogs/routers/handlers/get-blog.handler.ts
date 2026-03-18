@@ -18,6 +18,6 @@ export async function getBlogHandler(
     const blogViewModel = mapToBlogViewModel(blog);
     res.status(HttpStatus.Ok).send(blogViewModel);
   } catch (e: unknown) {
-    res.status(HttpStatus.InternalServerError).send();
+    return res.sendStatus(HttpStatus.InternalServerError);
   }
 }
