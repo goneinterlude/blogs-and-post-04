@@ -1,4 +1,4 @@
 export type ValidationError = {
-    message: string;
-    field: string;
-}
+  message: string;
+  field: string;
+};

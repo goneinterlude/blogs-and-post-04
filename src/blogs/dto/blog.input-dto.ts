@@ -1,12 +1,12 @@
 export type BlogInputDTO = {
-    name: string,
-    description: string,
-    websiteUrl: string
-}
+  name: string;
+  description: string;
+  websiteUrl: string;
+};
 
 export type BlogUpdateDTO = {
-    id: string,
-    name: string,
-    description: string,
-    websiteUrl: string
-}
+  id: string;
+  name: string;
+  description: string;
+  websiteUrl: string;
+};

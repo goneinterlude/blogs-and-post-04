@@ -1,36 +1,45 @@
-import {PostUpdateDTO} from "../dto/posts-input.dto";
-import {postCollection} from "../../db/mongodb";
+import { PostUpdateDTO } from "../dto/posts-input.dto";
+import { postCollection } from "../../db/mongodb";
 import { ObjectId, WithId } from "mongodb";
-import {PostDbModel} from "../types/post-db-model";
+import { PostDbModel } from "../types/post-db-model";
 
 export const postsRepository = {
-    async findAll(): Promise<WithId<PostDbModel>[]> {
-            return postCollection.find().toArray();
+  async findAll(): Promise<WithId<PostDbModel>[]> {
+    return postCollection.find().toArray();
+  },
+  async findById(id: string): Promise<WithId<PostDbModel> | null> {
+    return postCollection.findOne({ _id: new ObjectId(id) }); // Если результат поиска равно null или undefined, то вернем null.
+  },
+  async create(newPost: PostDbModel): Promise<WithId<PostDbModel>> {
+    const insertResult = await postCollection.insertOne(newPost);
+    return { ...newPost, _id: insertResult.insertedId };
+  },
+  async update(
+    id: string,
+    dto: PostUpdateDTO,
+    blogName: string,
+  ): Promise<boolean> {
+    const updateResult = await postCollection.updateOne(
+      { _id: new ObjectId(id) },
+      {
+        $set: {
+          title: dto.title,
+          shortDescription: dto.shortDescription,
+          content: dto.content,
+          blogId: dto.blogId,
+          blogName: blogName,
         },
-    async findById(id: string): Promise<WithId<PostDbModel> | null> {
-        return postCollection.findOne({ _id: new ObjectId(id)}) // Если результат поиска равно null или undefined, то вернем null.
-    },
-    async create(newPost: PostDbModel): Promise<WithId<PostDbModel>> {
-        const insertResult = await postCollection.insertOne(newPost);
-        return { ...newPost, _id: insertResult.insertedId }
-    },
-    async update(id: string, dto: PostUpdateDTO, blogName: string): Promise<boolean> {
-        const updateResult = await postCollection.updateOne({ _id: new ObjectId(id) }, {
-            $set: {
-                title: dto.title,
-                shortDescription: dto.shortDescription,
-                content: dto.content,
-                blogId: dto.blogId,
-                blogName: blogName,
-            }
-        })
-        return updateResult.matchedCount === 1;
-    },
-   async delete(id: string): Promise<void> {
-       const deleteResult = await postCollection.deleteOne({ _id: new ObjectId(id) });
-       if (deleteResult.deletedCount < 1) {
-           throw new Error('Post not exist');
-       }
-       return;
+      },
+    );
+    return updateResult.matchedCount === 1;
+  },
+  async delete(id: string): Promise<void> {
+    const deleteResult = await postCollection.deleteOne({
+      _id: new ObjectId(id),
+    });
+    if (deleteResult.deletedCount < 1) {
+      throw new Error("Post not exist");
     }
-}
+    return;
+  },
+};

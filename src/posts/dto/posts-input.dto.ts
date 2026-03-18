@@ -1,13 +1,13 @@
 export type PostInputDTO = {
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string,
-}
+  title: string;
+  shortDescription: string;
+  content: string;
+  blogId: string;
+};
 
 export type PostUpdateDTO = {
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string,
-}
+  title: string;
+  shortDescription: string;
+  content: string;
+  blogId: string;
+};
