@@ -14,6 +14,8 @@ export async function createBlogHandler(
             name: req.body.name,
             description: req.body.description,
             websiteUrl: req.body.websiteUrl,
+            createdAt: new Date().toISOString(),
+            isMembership: false
         }
         const createdBlog = await blogsRepository.create(newBlog)
         const blogViewModel = mapToBlogViewModel(createdBlog)
