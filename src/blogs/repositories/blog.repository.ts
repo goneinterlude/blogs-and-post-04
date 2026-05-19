@@ -1,9 +1,27 @@
 import { Blog } from "../types/blog";
 import { blogCollection } from "../../db/mongodb";
-import { ObjectId, WithId } from "mongodb";
+import { Filter, ObjectId, WithId } from "mongodb";
 import { BlogInputDTO } from "../dto/blog.input-dto";
+import { BlogQueryParams } from "../types/blog-query";
 
 export const blogsRepository = {
+  async findWithPagination(
+    query: BlogQueryParams,
+  ): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
+    const filter: Filter<Blog> = query.searchNameTerm
+      ? { name: { $regex: escapeRegExp(query.searchNameTerm), $options: "i" } }
+      : {};
+
+    const totalCount = await blogCollection.countDocuments(filter);
+    const items = await blogCollection
+      .find(filter)
+      .sort({ [query.sortBy]: query.sortDirection === "asc" ? 1 : -1 })
+      .skip((query.pageNumber - 1) * query.pageSize)
+      .limit(query.pageSize)
+      .toArray();
+
+    return { items, totalCount };
+  },
   async findAll(): Promise<WithId<Blog>[]> {
     return blogCollection.find().toArray();
   },
@@ -34,3 +52,7 @@ export const blogsRepository = {
     return deleteResult.deletedCount === 1;
   },
 };
+
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
