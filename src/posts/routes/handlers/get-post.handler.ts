@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
+import { ObjectId } from "mongodb";
 import { HttpStatus } from "../../../core/types/http-statuses";
-import { createErrorMessages } from "../../../core/utils/error.utils";
 import { postsRepository } from "../../repositories/posts.repository";
 import { mapToPostViewModel } from "../mappers/map-to-post";
 
@@ -10,6 +10,11 @@ export async function getPostHandler(
 ) {
   try {
     const id = req.params.id;
+
+    if (!ObjectId.isValid(id)) {
+      return res.sendStatus(HttpStatus.NotFound);
+    }
+
     const post = await postsRepository.findById(id);
     if (!post) {
       return res.sendStatus(HttpStatus.NotFound);
