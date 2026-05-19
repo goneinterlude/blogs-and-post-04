@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
+import { ObjectId } from "mongodb";
 import { PostInputDTO } from "../../dto/posts-input.dto";
 import { HttpStatus } from "../../../core/types/http-statuses";
-import { Post } from "../../types/post";
 import { postsRepository } from "../../repositories/posts.repository";
 import { blogsRepository } from "../../../blogs/repositories/blog.repository";
 import { createErrorMessages } from "../../../core/utils/error.utils";
@@ -14,17 +14,30 @@ export async function createPostHandler(
 ) {
   try {
     const blogId = req.body.blogId;
+
+    if (!ObjectId.isValid(blogId)) {
+      return res
+        .status(HttpStatus.BadRequest)
+        .send(
+          createErrorMessages([{ message: "Blog not found", field: "blogId" }]),
+        );
+    }
+
     const blog = await blogsRepository.findById(blogId);
 
     if (!blog) {
-      return res.sendStatus(HttpStatus.BadRequest);
+      return res
+        .status(HttpStatus.BadRequest)
+        .send(
+          createErrorMessages([{ message: "Blog not found", field: "blogId" }]),
+        );
     }
 
     const newPost: PostDbModel = {
       title: req.body.title,
       shortDescription: req.body.shortDescription,
       content: req.body.content,
-      blogId: req.body.blogId,
+      blogId,
       blogName: blog.name,
       createdAt: new Date().toISOString(),
     };
