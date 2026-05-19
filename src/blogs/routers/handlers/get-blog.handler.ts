@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
+import { ObjectId } from "mongodb";
 import { HttpStatus } from "../../../core/types/http-statuses";
-import { createErrorMessages } from "../../../core/utils/error.utils";
 import { blogsRepository } from "../../repositories/blog.repository";
 import { mapToBlogViewModel } from "../mappers/map-to-blog";
 
@@ -10,6 +10,11 @@ export async function getBlogHandler(
 ) {
   try {
     const id = req.params.id;
+
+    if (!ObjectId.isValid(id)) {
+      return res.sendStatus(HttpStatus.NotFound);
+    }
+
     const blog = await blogsRepository.findById(id);
     if (!blog) {
       return res.sendStatus(HttpStatus.NotFound);
