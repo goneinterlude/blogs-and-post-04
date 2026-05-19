@@ -6,7 +6,7 @@ import {
   PaginatedViewModel,
   SortDirection,
 } from "../../../core/types/pagination";
-import { PostQueryParams, PostSortBy } from "../../types/post-query";
+import { PostQueryParams } from "../../types/post-query";
 import { PostViewModel } from "../../types/postViewModel";
 
 export async function getPostsListHandler(req: Request, res: Response) {
@@ -39,8 +39,10 @@ function getPostQueryParams(query: Request["query"]): PostQueryParams {
   };
 }
 
-function parsePostSortBy(value: unknown): PostSortBy {
-  return value === "createdAt" ? value : "createdAt";
+function parsePostSortBy(value: unknown): string {
+  return typeof value === "string" && value.trim().length > 0
+    ? value
+    : "createdAt";
 }
 
 function parseSortDirection(value: unknown): SortDirection {

@@ -7,7 +7,7 @@ import {
 } from "../../../core/types/pagination";
 import { postsRepository } from "../../../posts/repositories/posts.repository";
 import { mapToPostViewModel } from "../../../posts/routes/mappers/map-to-post";
-import { PostQueryParams, PostSortBy } from "../../../posts/types/post-query";
+import { PostQueryParams } from "../../../posts/types/post-query";
 import { PostViewModel } from "../../../posts/types/postViewModel";
 import { blogsRepository } from "../../repositories/blog.repository";
 
@@ -55,8 +55,10 @@ function getPostQueryParams(query: Request["query"]): PostQueryParams {
   };
 }
 
-function parsePostSortBy(value: unknown): PostSortBy {
-  return value === "createdAt" ? value : "createdAt";
+function parsePostSortBy(value: unknown): string {
+  return typeof value === "string" && value.trim().length > 0
+    ? value
+    : "createdAt";
 }
 
 function parseSortDirection(value: unknown): SortDirection {

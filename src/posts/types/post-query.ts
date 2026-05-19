@@ -1,9 +1,7 @@
 import { SortDirection } from "../../core/types/pagination";
 
-export type PostSortBy = "createdAt";
-
 export type PostQueryParams = {
-  sortBy: PostSortBy;
+  sortBy: string;
   sortDirection: SortDirection;
   pageNumber: number;
   pageSize: number;
