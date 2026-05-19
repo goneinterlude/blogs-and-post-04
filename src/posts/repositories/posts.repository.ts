@@ -5,6 +5,19 @@ import { PostDbModel } from "../types/post-db-model";
 import { PostQueryParams } from "../types/post-query";
 
 export const postsRepository = {
+  async findWithPagination(
+    query: PostQueryParams,
+  ): Promise<{ items: WithId<PostDbModel>[]; totalCount: number }> {
+    const totalCount = await postCollection.countDocuments({});
+    const items = await postCollection
+      .find()
+      .sort({ [query.sortBy]: query.sortDirection === "asc" ? 1 : -1 })
+      .skip((query.pageNumber - 1) * query.pageSize)
+      .limit(query.pageSize)
+      .toArray();
+
+    return { items, totalCount };
+  },
   async findByBlogIdWithPagination(
     blogId: string,
     query: PostQueryParams,
