@@ -23,9 +23,9 @@ postsRouter
   )
   .put(
     "/:id",
+    superAdminGuardMiddleware,
     idValidation,
     postInputDtoValidation,
-    superAdminGuardMiddleware,
     inputValidationResultMiddleware,
     updatePostHandler,
   )

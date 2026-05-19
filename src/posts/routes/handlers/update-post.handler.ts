@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
-import { PostInputDTO, PostUpdateDTO } from "../../dto/posts-input.dto";
+import { ObjectId } from "mongodb";
+import { PostUpdateDTO } from "../../dto/posts-input.dto";
 import { HttpStatus } from "../../../core/types/http-statuses";
 import { postsRepository } from "../../repositories/posts.repository";
 import { blogsRepository } from "../../../blogs/repositories/blog.repository";
@@ -11,7 +12,20 @@ export async function updatePostHandler(
 ) {
   try {
     const postId = req.params.id;
-    const blogId = req.body.blogId; // number
+    const blogId = req.body.blogId;
+
+    if (!ObjectId.isValid(postId)) {
+      return res.sendStatus(HttpStatus.NotFound);
+    }
+
+    if (!ObjectId.isValid(blogId)) {
+      return res
+        .status(HttpStatus.BadRequest)
+        .send(
+          createErrorMessages([{ message: "Blog not found", field: "blogId" }]),
+        );
+    }
+
     const blog = await blogsRepository.findById(blogId);
 
     if (!blog) {
