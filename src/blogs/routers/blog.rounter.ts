@@ -9,6 +9,8 @@ import { updateBlogHandler } from "./handlers/update-blog.handler";
 import { deleteBlogHandler } from "./handlers/delete-blog.handler";
 import { blogInputDtoValidation } from "../validation/blog.input-dto.validation-middlewares";
 import { getBlogPostsListHandler } from "./handlers/get-blog-posts-list.handler";
+import { createBlogPostHandler } from "./handlers/create-blog-post.handler";
+import { postForBlogInputDtoValidation } from "../../posts/validation/post.input-validation.middleware";
 
 export const blogsRouter = Router({});
 
@@ -16,6 +18,14 @@ blogsRouter
   .get("", getBlogsListHandler)
 
   .get("/:blogId/posts", getBlogPostsListHandler)
+
+  .post(
+    "/:blogId/posts",
+    superAdminGuardMiddleware,
+    postForBlogInputDtoValidation,
+    inputValidationResultMiddleware,
+    createBlogPostHandler,
+  )
 
   .get("/:id", idValidation, inputValidationResultMiddleware, getBlogHandler)
 

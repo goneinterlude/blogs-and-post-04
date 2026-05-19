@@ -5,6 +5,12 @@ export type PostInputDTO = {
   blogId: string;
 };
 
+export type PostForBlogInputDTO = {
+  title: string;
+  shortDescription: string;
+  content: string;
+};
+
 export type PostUpdateDTO = {
   title: string;
   shortDescription: string;
