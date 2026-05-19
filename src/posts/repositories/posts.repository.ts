@@ -2,8 +2,24 @@ import { PostUpdateDTO } from "../dto/posts-input.dto";
 import { postCollection } from "../../db/mongodb";
 import { ObjectId, WithId } from "mongodb";
 import { PostDbModel } from "../types/post-db-model";
+import { PostQueryParams } from "../types/post-query";
 
 export const postsRepository = {
+  async findByBlogIdWithPagination(
+    blogId: string,
+    query: PostQueryParams,
+  ): Promise<{ items: WithId<PostDbModel>[]; totalCount: number }> {
+    const filter = { blogId };
+    const totalCount = await postCollection.countDocuments(filter);
+    const items = await postCollection
+      .find(filter)
+      .sort({ [query.sortBy]: query.sortDirection === "asc" ? 1 : -1 })
+      .skip((query.pageNumber - 1) * query.pageSize)
+      .limit(query.pageSize)
+      .toArray();
+
+    return { items, totalCount };
+  },
   async findAll(): Promise<WithId<PostDbModel>[]> {
     return postCollection.find().toArray();
   },

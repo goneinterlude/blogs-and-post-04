@@ -22,7 +22,7 @@ export const superAdminGuardMiddleware = (
 
   const [authType, token] = auth.split(" "); //YWRtaW46cXdlcnR5Cg==
 
-  if (authType !== "Basic") {
+  if (authType !== "Basic" || !token) {
     res.sendStatus(HttpStatus.Unauthorized);
     return;
   }
